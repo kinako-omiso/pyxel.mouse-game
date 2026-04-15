@@ -12,6 +12,7 @@ HELL = "hell"
 class App:
     def __init__(self):
         pyxel.init(SCREEN_WIDTH, SCREEN_HEIGHT, title="mouse_game")
+        pyxel.load("mouse_game.pyxres")
         pyxel.mouse(True)
         self.START_SCENE= "START"
         self.PLAY_SCENE = "PLAY"
