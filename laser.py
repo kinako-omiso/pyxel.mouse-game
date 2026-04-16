@@ -25,9 +25,7 @@ class CenterLaser:
     def update(self):
        pass
 
-    def draw(self, laser_number):
-        i= (pyxel.frame_count // 5) % 7
-
+    def draw(self, laser_number,i):
         if laser_number ==0 and i <6:
             x = self.center_laser.draw_x[i]
             y = self.center_laser.draw_y[i]
@@ -59,10 +57,7 @@ class LeftLaser:
         if self.is_collision==True:
             self.laytimer = -1
 
-    def draw(self, laser_number):
-        i= (pyxel.frame_count // 5) % 7
-
-
+    def draw(self, laser_number,i):
         if laser_number ==0 and i<6:
             x = self.left_laser.draw_x[i]
             y = self.left_laser.draw_y[i]
@@ -94,9 +89,7 @@ class RightLaser:
         if self.is_collision==True:
             self.laytimer = -1
 
-    def draw(self,laser_number):
-        i= (pyxel.frame_count // 5) % 7
-
+    def draw(self,laser_number,i):
         if laser_number ==0 and i <6:
             x=self.right_laser.draw_x[i]
             y=self.right_laser.draw_y[i] 

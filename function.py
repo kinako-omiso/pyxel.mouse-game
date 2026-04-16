@@ -14,12 +14,29 @@ def update_start_scene(self):
         self.current_scene = self.PLAY_SCENE
 
 def update_play_scene(self):
+    if self.is_collision == True:
+            
+            
+            self.current_scene = self.MENU_SCENE
+            self.is_collision = False
+
+    self.frame_count =  (pyxel.frame_count // 5) % 7
     if pyxel.btnp(pyxel.KEY_R):
         reset_game(self)
 
     if pyxel.frame_count % 150 == 0:  # 60フレームごとにレーザーの種類をランダムに変更
         self.laser_random = random.randint(0, 2)
-        self.laser_number = 0 
+        self.laser_number = 0
+    if (pyxel.frame_count // 10) % 7 == 5 or (pyxel.frame_count // 10) % 7 == 6:
+        if self.laser_random == 0 and 54<self.char_x < 70:
+             self.is_collision = True
+        elif self.laser_random == 1 and 86<self.char_x < 106:
+             self.is_collision = True
+        elif self.laser_random == 2 and 13 <self.char_x < 33:
+             self.is_collision = True
+        
+    
+
 
     self.character.update()
     
@@ -52,9 +69,9 @@ def draw_play_scene(self):
     pyxel.blt(0, 0, bank, u, v, 128, 128)
     self.character.draw()
     if self.laser_random == 0:
-        self.center_laser.draw(self.laser_number)
+        self.center_laser.draw(self.laser_number,self.frame_count)
     elif self.laser_random == 1:
-        self.left_laser.draw(self.laser_number)
+        self.left_laser.draw(self.laser_number,self.frame_count)
     elif self.laser_random == 2:
-        self.right_laser.draw(self.laser_number)
+        self.right_laser.draw(self.laser_number,self.frame_count)
 
