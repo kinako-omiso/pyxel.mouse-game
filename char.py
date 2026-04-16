@@ -1,4 +1,4 @@
-import pyxel
+import pyxel #type: ignore
 
 class Character:
     def __init__(self,x,y):

@@ -1,5 +1,5 @@
-import pyxel
-import char
+import pyxel #type: ignore
+import random
 
 def reset_game(self):
     self.char_x = 0
@@ -16,6 +16,11 @@ def update_start_scene(self):
 def update_play_scene(self):
     if pyxel.btnp(pyxel.KEY_R):
         reset_game(self)
+
+    if pyxel.frame_count % 150 == 0:  # 60フレームごとにレーザーの種類をランダムに変更
+        self.laser_random = random.randint(0, 2)
+        self.laser_number = 0 
+
     self.character.update()
     
 
@@ -46,5 +51,10 @@ def draw_play_scene(self):
     # バンク0の(u, v)から 128x128 ピクセルを切り出して、画面の(0, 0)に描画
     pyxel.blt(0, 0, bank, u, v, 128, 128)
     self.character.draw()
-    
+    if self.laser_random == 0:
+        self.center_laser.draw(self.laser_number)
+    elif self.laser_random == 1:
+        self.left_laser.draw(self.laser_number)
+    elif self.laser_random == 2:
+        self.right_laser.draw(self.laser_number)
 
