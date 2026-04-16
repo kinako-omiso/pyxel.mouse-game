@@ -29,6 +29,7 @@ class App:
         self.char_y = SCREEN_HEIGHT * 4 // 5
         self.laser_random = -1
         self.laser_number = 0
+        self.is_collision = False
         self.character = char.Character(self.char_x, self.char_y)
         self.center_laser = laser.CenterLaser()
         self.left_laser = laser.LeftLaser()
