@@ -3,7 +3,7 @@ import function
 import char
 import laser
 
-SCREEN_WIDTH = 128
+SCREEN_WIDTH = 170
 SCREEN_HEIGHT = 128
 
 EASY = "easy"
@@ -30,6 +30,7 @@ class App:
         self.laser_random = -1
         self.laser_number = 0
         self.is_collision = False
+        self.hp = 3
         self.character = char.Character(self.char_x, self.char_y)
         self.center_laser = laser.CenterLaser()
         self.left_laser = laser.LeftLaser()

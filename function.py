@@ -1,9 +1,15 @@
 import pyxel #type: ignore
 import random
+#hp実装
 
 def reset_game(self):
-    self.char_x = 0
-    self.char_y = 0
+    self.char_x = pyxel.width // 2 - 8
+    self.char_y = pyxel.height * 4 // 5
+    self.is_collision = False
+    self.hp = 3
+    self.laser_random = -1
+    self.laser_number = 0
+    self.current_scene = self.MENU_SCENE
 
 def update_menu_scene(self):
     if pyxel.btnp(pyxel.MOUSE_BUTTON_LEFT):
@@ -15,25 +21,30 @@ def update_start_scene(self):
 
 def update_play_scene(self):
     if self.is_collision == True:
-            
-            
-            self.current_scene = self.MENU_SCENE
-            self.is_collision = False
+        if self.hp == 0:
+            if pyxel.btnp(pyxel.KEY_SPACE):
+            # ▼ ここを変更: スペースキーでメニュー画面へ飛ぶ
+                self.current_scene = self.MENU_SCENE
+            return
+        else:
+            self.hp -= 1
+
+        self.is_collision = False
 
     self.frame_count =  (pyxel.frame_count // 5) % 7
     if pyxel.btnp(pyxel.KEY_R):
         reset_game(self)
 
-    if pyxel.frame_count % 150 == 0:  # 60フレームごとにレーザーの種類をランダムに変更
+    if pyxel.frame_count % 150 == 0:  # 150フレームごとにレーザーの種類をランダムに変更
         self.laser_random = random.randint(0, 2)
         self.laser_number = 0
     if (pyxel.frame_count // 10) % 7 == 5 or (pyxel.frame_count // 10) % 7 == 6:
         if self.laser_random == 0 and 54<self.char_x < 70:
-             self.is_collision = True
+            self.is_collision = True
         elif self.laser_random == 1 and 86<self.char_x < 106:
-             self.is_collision = True
+            self.is_collision = True
         elif self.laser_random == 2 and 13 <self.char_x < 33:
-             self.is_collision = True
+            self.is_collision = True
         
     
 
@@ -54,7 +65,8 @@ def draw_start_scene(self):
     pyxel.text(50, 50, "START", 7)
 
 def draw_play_scene(self):
-    pyxel.cls(pyxel.COLOR_BLACK)
+    pyxel.cls(pyxel.COLOR_ORANGE)
+    pyxel.rect(130, 4, 35, 124, pyxel.COLOR_BLACK)
     # 4フレーム(0, 1, 2, 3)をループ (10フレームごとに次の絵へ)
     frame_index = (pyxel.frame_count // 5) % 8   
     # 画像(バンク0)の中での、横と縦の位置を計算
@@ -75,3 +87,11 @@ def draw_play_scene(self):
     elif self.laser_random == 2:
         self.right_laser.draw(self.laser_number,self.frame_count)
 
+    if self.hp >= 1:
+        pyxel.blt(132, 4, 2, 128, 128, 9, 9)
+    # HPが2以上なら2個目も描画
+    if self.hp >= 2:
+        pyxel.blt(143, 4, 2, 128, 128, 9, 9)
+    # HPが3（以上）なら3個目も描画
+    if self.hp >= 3:
+        pyxel.blt(152, 4, 2, 128, 128, 9, 9)
