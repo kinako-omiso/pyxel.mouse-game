@@ -1,8 +1,9 @@
 import pyxel 
 import function
+import char
 
-SCREEN_WIDTH = 256
-SCREEN_HEIGHT = 256
+SCREEN_WIDTH = 128
+SCREEN_HEIGHT = 128
 
 EASY = "easy"
 NORMAL = "normal"
@@ -12,7 +13,7 @@ HELL = "hell"
 class App:
     def __init__(self):
         pyxel.init(SCREEN_WIDTH, SCREEN_HEIGHT, title="mouse_game")
-        pyxel.load("mouse_game.pyxres")
+        pyxel.load("asset.pyxres")
         pyxel.mouse(True)
         self.START_SCENE= "START"
         self.PLAY_SCENE = "PLAY"
@@ -23,6 +24,10 @@ class App:
         self.HARD = HARD
         self.HELL = HELL
         self.current_scene = self.MENU_SCENE
+        self.char_x = SCREEN_WIDTH // 2 - 8
+        self.char_y = SCREEN_HEIGHT * 4 // 5
+        self.character = char.Character(self.char_x, self.char_y)
+        
 
         pyxel.run(self.update, self.draw)
 
