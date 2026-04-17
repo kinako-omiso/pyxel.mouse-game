@@ -31,6 +31,7 @@ class App:
         self.laser_number = 0
         self.is_collision = False
         self.hp = 3
+        self.already_hit = False
         self.character = char.Character(self.char_x, self.char_y)
         self.center_laser = laser.CenterLaser()
         self.left_laser = laser.LeftLaser()

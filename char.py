@@ -21,6 +21,7 @@ class Character:
         
     def update(self):
         self.move()
+        self.x = max(0, min(self.x, 112))
     
     def draw(self):
         pyxel.blt(self.x, self.y, 2, 0, 0, 16, 16, pyxel.COLOR_BLACK)

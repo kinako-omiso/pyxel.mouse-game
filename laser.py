@@ -36,6 +36,7 @@ class CenterLaser:
             pyxel.blt(x, y, 2, u, v, w, h, pyxel.COLOR_BLACK)
             if i == 5:
                 laser_number = 1
+                return laser_number
         else:
             pass
 

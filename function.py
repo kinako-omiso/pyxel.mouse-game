@@ -20,36 +20,43 @@ def update_start_scene(self):
         self.current_scene = self.PLAY_SCENE
 
 def update_play_scene(self):
-    if self.is_collision == True:
-        if self.hp == 0:
-            if pyxel.btnp(pyxel.KEY_SPACE):
-            # ▼ ここを変更: スペースキーでメニュー画面へ飛ぶ
-                self.current_scene = self.MENU_SCENE
-            return
-        else:
-            self.hp -= 1
+        center_x = self.character.x + 8
+        if self.is_collision:
+            if self.hp == 0:
+                if pyxel.btnp(pyxel.KEY_SPACE):
+                    self.current_scene = self.MENU_SCENE
+                return
+            else:
+                self.hp -= 1
+            self.is_collision = False
 
-        self.is_collision = False
+        self.frame_count = (pyxel.frame_count // 5) % 7
+        if pyxel.btnp(pyxel.KEY_R):
+            reset_game(self)
 
-    self.frame_count =  (pyxel.frame_count // 5) % 7
-    if pyxel.btnp(pyxel.KEY_R):
-        reset_game(self)
+        if pyxel.frame_count % 35 == 0:  # 30フレームごとにレーザー発射
+            self.laser_random = random.randint(0, 2)
+            self.laser_number = 0 
+            self.already_hit = False
 
-    if pyxel.frame_count % 150 == 0:  # 150フレームごとにレーザーの種類をランダムに変更
-        self.laser_random = random.randint(0, 2)
-        self.laser_number = 0
-    if (pyxel.frame_count // 10) % 7 == 5 or (pyxel.frame_count // 10) % 7 == 6:
-        if self.laser_random == 0 and 54<self.char_x < 70:
-            self.is_collision = True
-        elif self.laser_random == 1 and 86<self.char_x < 106:
-            self.is_collision = True
-        elif self.laser_random == 2 and 13 <self.char_x < 33:
-            self.is_collision = True
-        
+        if self.frame_count == 6:
+            self.laser_number = 1
+
+        if self.laser_number == 0 and (self.frame_count == 4 or self.frame_count == 5):
+            if self.already_hit==False:
+                if self.laser_random == 0 and 54 <  center_x  < 70:
+                    self.is_collision = True
+                    self.already_hit = True
+                elif self.laser_random == 1 and 96 <  center_x  < 116:
+                    self.is_collision = True
+                    self.already_hit = True
+                elif self.laser_random == 2 and 13 <  center_x  < 33:
+                    self.is_collision = True
+                    self.already_hit = True
     
 
 
-    self.character.update()
+        self.character.update()
     
 
 def draw_menu_scene(self):
@@ -65,33 +72,38 @@ def draw_start_scene(self):
     pyxel.text(50, 50, "START", 7)
 
 def draw_play_scene(self):
-    pyxel.cls(pyxel.COLOR_ORANGE)
-    pyxel.rect(130, 4, 35, 124, pyxel.COLOR_BLACK)
-    # 4フレーム(0, 1, 2, 3)をループ (10フレームごとに次の絵へ)
-    frame_index = (pyxel.frame_count // 5) % 8   
-    # 画像(バンク0)の中での、横と縦の位置を計算
-    bank = frame_index // 4  # バンクの位置 (0 か 1)
-    local_frame = frame_index % 4
-    col = local_frame % 2  # 横の位置 (0 か 1)
-    row = local_frame // 2 # 縦の位置 (0 か 1) 
-    # 128ピクセルずつズラすための座標計算
-    u = col * 128
-    v = row * 128
-    # バンク0の(u, v)から 128x128 ピクセルを切り出して、画面の(0, 0)に描画
-    pyxel.blt(0, 0, bank, u, v, 128, 128)
-    self.character.draw()
-    if self.laser_random == 0:
-        self.center_laser.draw(self.laser_number,self.frame_count)
-    elif self.laser_random == 1:
-        self.left_laser.draw(self.laser_number,self.frame_count)
-    elif self.laser_random == 2:
-        self.right_laser.draw(self.laser_number,self.frame_count)
+        pyxel.cls(pyxel.COLOR_ORANGE)
+        pyxel.rect(132, 4, 35, 120, pyxel.COLOR_BLACK)
+        pyxel.rect(0, 0, 128, 128, pyxel.COLOR_BLACK)
+        pyxel.text(pyxel.width//4+10, pyxel.height//10 + 40, "GAME OVER", pyxel.COLOR_WHITE)
+        
+        if self.hp > 0:
+            #背景描画
+            # 8フレーム(0, 1, 2, 3)をループ (5フレームごとに次の絵へ)
+            frame_index = (pyxel.frame_count // 5) % 8   
+            # 画像(バンク0)の中での、横と縦の位置を計算
+            bank = frame_index // 4  # バンクの位置 (0 か 1)
+            local_frame = frame_index % 4
+            col = local_frame % 2
+            row = local_frame // 2
+            # 128ピクセルずつズラすための座標計算
+            u = col * 128
+            v = row * 128
+            # バンク0の(u, v)から 128x128 ピクセルを切り出して、画面の(0, 0)に描画
+            pyxel.blt(0, 0, bank, u, v, 128, 128)
+            self.character.draw()
+            
+            # レーザー描画
+            if self.laser_random == 0:
+                self.center_laser.draw(self.laser_number, self.frame_count)
+            elif self.laser_random == 1:
+                self.left_laser.draw(self.laser_number, self.frame_count)
+            elif self.laser_random == 2:
+                self.right_laser.draw(self.laser_number, self.frame_count)
 
-    if self.hp >= 1:
-        pyxel.blt(132, 4, 2, 128, 128, 9, 9)
-    # HPが2以上なら2個目も描画
-    if self.hp >= 2:
-        pyxel.blt(143, 4, 2, 128, 128, 9, 9)
-    # HPが3（以上）なら3個目も描画
-    if self.hp >= 3:
-        pyxel.blt(152, 4, 2, 128, 128, 9, 9)
+        for i in range(self.hp):
+            # x座標を 132 から始めて、10ピクセルずつズラして描画
+            # (1個目:132, 2個目:142, 3個目:152)
+            pyxel.blt(135 + i * 10, 4, 2, 128, 128, 9, 9)
+        for i in range(3 - self.hp):
+            pyxel.blt(135 + (self.hp + i) * 10, 4, 2, 135, 136, 9, 9)
