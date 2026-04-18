@@ -2,6 +2,7 @@ import pyxel #type: ignore
 import function
 import char
 import laser
+import enemy
 
 SCREEN_WIDTH = 170
 SCREEN_HEIGHT = 128
@@ -36,6 +37,7 @@ class App:
         self.center_laser = laser.CenterLaser()
         self.left_laser = laser.LeftLaser()
         self.right_laser = laser.RightLaser()
+        self.enemy = enemy.Enemy()
 
         pyxel.run(self.update, self.draw)
 
@@ -44,7 +46,7 @@ class App:
             function.update_menu_scene(self)
         elif self.current_scene == self.START_SCENE:
             function.update_start_scene(self)
-        else:
+        elif self.current_scene == self.PLAY_SCENE:
             function.update_play_scene(self)
 
         if pyxel.btnp(pyxel.KEY_ESCAPE):

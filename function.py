@@ -5,10 +5,11 @@ import random
 def reset_game(self):
     self.char_x = pyxel.width // 2 - 8
     self.char_y = pyxel.height * 4 // 5
-    self.is_collision = False
-    self.hp = 3
     self.laser_random = -1
     self.laser_number = 0
+    self.is_collision = False
+    self.hp = 3
+    self.already_hit = False
     self.current_scene = self.MENU_SCENE
 
 def update_menu_scene(self):
@@ -20,19 +21,19 @@ def update_start_scene(self):
         self.current_scene = self.PLAY_SCENE
 
 def update_play_scene(self):
-        center_x = self.character.x + 8
-        if self.is_collision:
+    if self.is_collision == True:
             if self.hp == 0:
                 if pyxel.btnp(pyxel.KEY_SPACE):
+                    reset_game()
                     self.current_scene = self.MENU_SCENE
-                return
+                    return
+                
             else:
                 self.hp -= 1
             self.is_collision = False
-
+    else:
+        center_x = self.character.x + 8
         self.frame_count = (pyxel.frame_count // 5) % 7
-        if pyxel.btnp(pyxel.KEY_R):
-            reset_game(self)
 
         if pyxel.frame_count % 35 == 0:  # 30フレームごとにレーザー発射
             self.laser_random = random.randint(0, 2)
@@ -53,10 +54,10 @@ def update_play_scene(self):
                 elif self.laser_random == 2 and 13 <  center_x  < 33:
                     self.is_collision = True
                     self.already_hit = True
-    
-
-
+        self.enemy.update()
         self.character.update()
+
+       
     
 
 def draw_menu_scene(self):
@@ -107,3 +108,5 @@ def draw_play_scene(self):
             pyxel.blt(135 + i * 10, 4, 2, 128, 128, 9, 9)
         for i in range(3 - self.hp):
             pyxel.blt(135 + (self.hp + i) * 10, 4, 2, 135, 136, 9, 9)
+
+        self.enemy.draw()
