@@ -38,10 +38,10 @@ class Enemy:
                 elif self.state == 2:
                     self.x = random.randint(self.x-50, self.x+50)
                     self.y = random.randint(self.y-50, self.y+50)
-                    if self.x< 8 or self.x > 128 or self.y < 8 or self.y > 120:
+                    if self.x< 16 or self.x > 128 or self.y < 16 or self.y > 120:
                         # 画面外に出ないように調整
-                        self.x = max(8, min(self.x, 128))
-                        self.y = max(8, min(self.y, 120))
+                        self.x = max(16, min(self.x, 128))
+                        self.y = max(16, min(self.y, 120))
                 elif self.state > 2:
                     # 状態2が終わったら消える（または次の行動へ）
                     self.state = -1 
@@ -97,37 +97,77 @@ class CircleEnemy(Enemy):
         super().__init__()
         self.bullets_active = False
         self.bullets_collision = False
+        self.bullet = None  # 追加：最初は弾がない状態にしておく
 
-
-    def update(self,char_x,char_y):
+    def update(self, char_x, char_y):
         super().update()
-        if self.state == 2 and self.bullets_active == False:
-            # 状態2のとき、弾がまだ出ていないなら新しい弾を発射
-            self.bullets = StraightBullet3D(char_x, char_y)
-            self.bullets.update()
+        
+        # 状態2になったとき、弾がまだ出ていないなら新しい弾を発射
+        if self.state == 2 and not self.bullets_active:
+            self.bullet = StraightBullet3D(char_x, char_y)
             self.bullets_active = True
-        if self.bullets_collision==False and char_x > self.x - 8 and char_x < self.x + 8 and char_y > self.y - 8 and char_y < self.y + 8:
+            
+        # 弾がアクティブな間は、毎フレーム弾の座標を更新する
+        if self.bullets_active and self.bullet:
+            self.bullet.update()
+            # 弾が寿命（地面到達）を迎えたらフラグを戻す
+            if not self.bullet.active:
+                self.bullets_active = False
+
+        # 注意: これは「敵本体」との当たり判定になっている。
+        # 弾との当たり判定にするなら self.bullet のスクリーン座標と比較する必要がある。
+        if not self.bullets_collision and char_x > self.x - 8 and char_x < self.x + 8 and char_y > self.y - 8 and char_y < self.y + 8:
             self.bullets_active = False
             self.bullets_collision = True
 
     def draw(self):
-            if self.state == 0:
-                if pyxel.frame_count%30 == 0:
-                    pyxel.blt(self.x-2, self.y-2, 2, 170, 144, 4, 4, pyxel.COLOR_BLACK)
-                else:
-                    pyxel.blt(self.x-2, self.y-2, 2, 170, 128, 4, 4, pyxel.COLOR_GRAY)
-                   
+        # 敵本体の描画
+        if self.state == 0:
+            if pyxel.frame_count % 30 == 0:
+                pyxel.blt(self.x-2, self.y-2, 2, 170, 144, 4, 4, pyxel.COLOR_BLACK)
+            else:
+                pyxel.blt(self.x-2, self.y-2, 2, 170, 128, 4, 4, pyxel.COLOR_GRAY)
+                
+        elif self.state == 1:
+            if pyxel.frame_count % 30 == 0:
+                pyxel.blt(self.x-4, self.y-4, 2, 160, 144, 8, 8, pyxel.COLOR_BLACK)
+            else:
+                pyxel.blt(self.x-4, self.y-4, 2, 160, 128, 8, 8, pyxel.COLOR_GRAY)
+                
+        elif self.state == 2:
+            if pyxel.frame_count % 30 == 0:
+                pyxel.blt(self.x-8, self.y-8, 2, 144, 144, 16, 16, pyxel.COLOR_BLACK)
+            else:   
+                pyxel.blt(self.x-8, self.y-8, 2, 144, 128, 16, 16, pyxel.COLOR_GRAY)
+                
+        # 弾の描画（弾が存在してアクティブな時だけ描画する）
+        if self.bullets_active and self.bullet:
+            self.bullet.draw()
 
-            elif self.state == 1:
-                if pyxel.frame_count%30 == 0:
-                    pyxel.blt(self.x-4, self.y-4, 2, 160, 144, 8, 8, pyxel.COLOR_BLACK)
-                else:
-                    pyxel.blt(self.x-4, self.y-4, 2, 160, 128, 8, 8, pyxel.COLOR_GRAY)
-                    
-            elif self.state == 2:
-                if pyxel.frame_count%30 == 0:
-                    pyxel.blt(self.x-8, self.y-8, 2, 144, 144, 16, 16, pyxel.COLOR_BLACK)
-                else:   
-                    pyxel.blt(self.x-8, self.y-8, 2, 144, 128, 16, 16, pyxel.COLOR_GRAY)
-            self.bullets.draw()
+
+class SquareEnemy(Enemy):
+    def __init__(self):
+        super().__init__()
+
+    def update(self):
+        super().update()
+
+    def draw(self):
+        if self.state == 0:
+            if pyxel.frame_count % 30 == 0:
+                pyxel.blt(self.x-2, self.y-2, 2, 199, 144, 4, 4, pyxel.COLOR_BLACK)
+            else:
+                pyxel.blt(self.x-2, self.y-2, 2, 199, 128, 4, 4, pyxel.COLOR_GRAY)
+                
+        elif self.state == 1:
+            if pyxel.frame_count % 30 == 0:
+                pyxel.blt(self.x-4, self.y-4, 2, 189, 144, 8, 8, pyxel.COLOR_BLACK)
+            else:
+                pyxel.blt(self.x-4, self.y-4, 2, 189, 128, 8, 8, pyxel.COLOR_GRAY)
+                
+        elif self.state == 2:
+            if pyxel.frame_count % 30 == 0:
+                pyxel.blt(self.x-8, self.y-8, 2, 173, 144, 16, 16, pyxel.COLOR_BLACK)
+            else:   
+                pyxel.blt(self.x-8, self.y-8, 2, 173, 128, 16, 16, pyxel.COLOR_GRAY)
             

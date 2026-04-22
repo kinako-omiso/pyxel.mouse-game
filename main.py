@@ -38,6 +38,7 @@ class App:
         self.left_laser = laser.LeftLaser()
         self.right_laser = laser.RightLaser()
         self.circle_enemy = enemy.CircleEnemy()
+        self.squreEnemy = enemy.SquareEnemy()
 
         pyxel.run(self.update, self.draw)
 

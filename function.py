@@ -55,8 +55,11 @@ def update_play_scene(self):
                 elif self.laser_random == 2 and 13 <  center_x  < 33:
                     self.is_collision = True
                     self.already_hit = True
-        self.circle_enemy.update()
+        self.circle_enemy.update(self.char_x,self.char_y)
         self.character.update()
+        self.squreEnemy.update()
+    
+
       
 
        
@@ -112,3 +115,4 @@ def draw_play_scene(self):
             pyxel.blt(135 + (self.hp + i) * 10, 4, 2, 135, 136, 9, 9)
 
         self.circle_enemy.draw()
+        self.squreEnemy.draw()
