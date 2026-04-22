@@ -24,13 +24,14 @@ def update_play_scene(self):
     if self.is_collision == True:
             if self.hp == 0:
                 if pyxel.btnp(pyxel.KEY_SPACE):
-                    reset_game()
+                    self.reset_game()
                     self.current_scene = self.MENU_SCENE
+                    self.remove(self.circle_enemy)
                     return
                 
             else:
                 self.hp -= 1
-            self.is_collision = False
+                self.is_collision = False
     else:
         center_x = self.character.x + 8
         self.frame_count = (pyxel.frame_count // 5) % 7
@@ -54,8 +55,9 @@ def update_play_scene(self):
                 elif self.laser_random == 2 and 13 <  center_x  < 33:
                     self.is_collision = True
                     self.already_hit = True
-        self.enemy.update()
+        self.circle_enemy.update()
         self.character.update()
+      
 
        
     
@@ -109,4 +111,4 @@ def draw_play_scene(self):
         for i in range(3 - self.hp):
             pyxel.blt(135 + (self.hp + i) * 10, 4, 2, 135, 136, 9, 9)
 
-        self.enemy.draw()
+        self.circle_enemy.draw()
