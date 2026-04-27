@@ -153,8 +153,18 @@ class SquareEnemy(Enemy):
         super().update()
 
     def draw(self):
+        cycle_frame = pyxel.frame_count % 120
+        if cycle_frame < 60:
+            is_blink = False
+        else:
+            blink_step = (cycle_frame - 60) // 15
+            if blink_step % 2 == 0:
+                is_blink = True
+            else:
+                is_blink = False
+        
         if self.state == 0:
-            if pyxel.frame_count % 30 == 0:
+            
                 pyxel.blt(self.x-2, self.y-2, 2, 199, 144, 4, 4, pyxel.COLOR_BLACK)
             else:
                 pyxel.blt(self.x-2, self.y-2, 2, 199, 128, 4, 4, pyxel.COLOR_GRAY)

@@ -24,4 +24,20 @@ class Character:
         self.x = max(0, min(self.x, 112))
     
     def draw(self):
-        pyxel.blt(self.x, self.y, 2, 0, 0, 16, 16, pyxel.COLOR_BLACK)
+        cycle_frame = pyxel.frame_count % 120
+        if cycle_frame < 60:
+            is_blink = False
+        else:
+            blink_step = (cycle_frame - 60) // 15
+            if blink_step % 2 == 0:
+                is_blink = True
+            else:
+                is_blink = False
+        # 判定を使って実際に描画を分ける
+        if is_blink:
+            # 点滅用（差分）の画像を描画
+            # (座標 x, y や画像の切り出し位置などは適当に合わせる)
+            pyxel.blt(self.x, self.y, 2, 168, 160, 16, 16, pyxel.COLOR_GRAY)
+        else:
+            # 通常時の画像を描画
+            pyxel.blt(self.x, self.y, 2, 128, 160, 16, 16, pyxel.COLOR_GRAY)
